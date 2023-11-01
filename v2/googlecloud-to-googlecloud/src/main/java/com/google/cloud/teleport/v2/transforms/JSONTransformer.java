@@ -65,7 +65,7 @@ public abstract class JSONTransformer<T>
 
                   @Setup
                   public void setup() {
-                    keysToSkip = List.of("name", "age");
+                    keysToSkip = List.of("event_id", "event_timestamp", "event_name");
                   }
 
                   @ProcessElement
