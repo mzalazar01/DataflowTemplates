@@ -108,17 +108,17 @@ public abstract class JSONTransformer<T>
 
               if (key.contains("timestamp")) {
                 long timestampValue = value.asLong();
-                String length = String.valueOf(String.valueOf(timestampValue).length());
+                int length = String.valueOf(timestampValue).length();
                 switch (length) {
-                  case "13":
+                  case 13:
                     value =
                         objectMapper.valueToTree(Instant.ofEpochMilli(timestampValue).toString());
                     break;
-                  case "10":
+                  case 10:
                     value =
                         objectMapper.valueToTree(Instant.ofEpochSecond(timestampValue).toString());
                     break;
-                  case "16":
+                  case 16:
                     value =
                         objectMapper.valueToTree(
                             Instant.ofEpochSecond(
