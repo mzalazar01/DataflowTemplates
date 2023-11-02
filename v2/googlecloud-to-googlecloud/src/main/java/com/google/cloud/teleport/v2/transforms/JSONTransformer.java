@@ -100,9 +100,7 @@ public abstract class JSONTransformer<T>
             key -> {
               JsonNode value = jsonNode.get(key);
 
-              if (value.isObject()) {
-                value = transformJson(value, keysToSkip);
-              } else if (!keysToSkip.contains(key)) {
+              if (!keysToSkip.contains(key)) {
                 value = objectMapper.valueToTree(value.asText());
               }
 
