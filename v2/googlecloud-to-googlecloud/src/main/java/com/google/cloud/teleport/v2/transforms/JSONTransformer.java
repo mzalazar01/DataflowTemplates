@@ -135,6 +135,9 @@ public abstract class JSONTransformer<T>
               transformedJson.set(key, value);
             });
 
+    String processingTimestampAsString = Instant.ofEpochMilli(System.currentTimeMillis()).toString();
+    transformedJson.put("processing_timestamp", processingTimestampAsString);
+
     return transformedJson;
   }
 
