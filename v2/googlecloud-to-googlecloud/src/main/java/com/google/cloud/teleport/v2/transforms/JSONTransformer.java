@@ -69,20 +69,18 @@ public abstract class JSONTransformer<T>
                   }
 
                   @ProcessElement
-                  public void processElement(ProcessContext context) {
-                    FailsafeElement<T, String> element = context.element();
-                    String payloadStr = element.getPayload();
+                  public void processElement(@Element FailsafeElement<T, String> event, MultiOutputReceiver out) {
+                    String payloadStr = event.getPayload();
                     try {
                       String transformedJson =
                           JSONTransformer.transformJson(payloadStr, keysToSkip);
                       if (!Strings.isNullOrEmpty(transformedJson)) {
-                        context.output(
-                            FailsafeElement.of(element.getOriginalPayload(), payloadStr));
+                          out.get(successTag()).output(
+                            FailsafeElement.of(event.getOriginalPayload(), payloadStr));
                       }
                     } catch (Throwable e) {
-                      context.output(
-                          failureTag(),
-                          FailsafeElement.of(element)
+                        out.get(failureTag()).output(
+                          FailsafeElement.of(event)
                               .setErrorMessage(e.getMessage())
                               .setStacktrace(Throwables.getStackTraceAsString(e)));
                     }
