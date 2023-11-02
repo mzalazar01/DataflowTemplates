@@ -23,7 +23,6 @@ import com.google.api.services.bigquery.model.TableRow;
 import com.google.cloud.teleport.v2.coders.FailsafeElementCoder;
 import com.google.cloud.teleport.v2.templates.PubSubToBigQuery.PubsubMessageToTableRow;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
 import org.apache.beam.sdk.coders.CoderRegistry;
 import org.apache.beam.sdk.coders.StringUtf8Coder;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubMessage;
@@ -45,16 +44,11 @@ public class PubsubToBigQueryTest {
 
   @Rule public final transient TestPipeline pipeline = TestPipeline.create();
 
-  private static final String RESOURCES_DIR = "JavascriptTextTransformerTest/";
-
-  private static final String TRANSFORM_FILE_PATH =
-      Resources.getResource(RESOURCES_DIR + "transform.js").getPath();
-
   /** Tests the {@link PubSubToBigQuery} pipeline end-to-end. */
   @Test
   public void testPubsubToBigQueryE2E() throws Exception {
     // Test input
-    final String payload = "{\"ticker\": \"GOOGL\", \"price\": 1006.94}";
+    final String payload = "{\"ticker\": \"GOOGL\", \"price\": 1006.94, \"event_timestamp\": 1698179812609, \"server_timestamp\": 1698179812994015}";
     final PubsubMessage message =
         new PubsubMessage(payload.getBytes(), ImmutableMap.of("id", "123", "type", "custom_event"));
 
@@ -70,8 +64,6 @@ public class PubsubToBigQueryTest {
     // Parameters
     PubSubToBigQuery.Options options =
         PipelineOptionsFactory.create().as(PubSubToBigQuery.Options.class);
-    options.setJavascriptTextTransformGcsPath(TRANSFORM_FILE_PATH);
-    options.setJavascriptTextTransformFunctionName("transform");
 
     // Build pipeline
     PCollectionTuple transformOut =
@@ -90,7 +82,9 @@ public class PubsubToBigQueryTest {
             collection -> {
               TableRow result = collection.iterator().next();
               assertThat(result.get("ticker"), is(equalTo("GOOGL")));
-              assertThat(result.get("price"), is(equalTo(1006.94)));
+              assertThat(result.get("price"), is(equalTo("1006.94")));
+              assertThat(result.get("event_timestamp"), is(equalTo("2023-10-24T20:36:52.609Z")));
+              assertThat(result.get("server_timestamp"), is(equalTo("2023-10-24T20:36:52.994015Z")));
               return null;
             });
 

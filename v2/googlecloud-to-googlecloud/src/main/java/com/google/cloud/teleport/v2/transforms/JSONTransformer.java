@@ -76,7 +76,7 @@ public abstract class JSONTransformer<T>
                           JSONTransformer.transformJson(payloadStr, keysToSkip);
                       if (!Strings.isNullOrEmpty(transformedJson)) {
                           out.get(successTag()).output(
-                            FailsafeElement.of(event.getOriginalPayload(), payloadStr));
+                            FailsafeElement.of(event.getOriginalPayload(), transformedJson));
                       }
                     } catch (Throwable e) {
                         out.get(failureTag()).output(
