@@ -99,9 +99,9 @@ public abstract class JSONTransformer<T>
               JsonNode value = jsonNode.get(key);
 
               if (value.isObject()) {
-                value = transformJson(value, keysToSkip);
+                value = objectMapper.valueToTree(value.toString());
               } else if (!keysToSkip.contains(key)) {
-                value = objectMapper.valueToTree(value.asText());
+                value = objectMapper.valueToTree(value.toString());
               }
 
               if (key.contains("timestamp")) {
