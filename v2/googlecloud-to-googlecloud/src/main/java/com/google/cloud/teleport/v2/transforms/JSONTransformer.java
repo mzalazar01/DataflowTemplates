@@ -92,8 +92,6 @@ public abstract class JSONTransformer<T>
   public static JsonNode transformJson(JsonNode jsonNode, List<String> keysToSkip) {
     ObjectNode transformedJson = objectMapper.createObjectNode();
 
-    transformedJson.put("processing_timestamp", System.currentTimeMillis());
-
     jsonNode
         .fieldNames()
         .forEachRemaining(
